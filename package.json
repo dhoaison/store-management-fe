@@ -1,7 +1,7 @@
 {
-  "name": "@minimal/minimal-kit-react",
-  "author": "minimals.cc",
-  "version": "2.4.0",
+  "name": "store-management",
+  "author": "store-management",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "start": "react-scripts start",
