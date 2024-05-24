@@ -4,12 +4,10 @@ import twitterFill from '@iconify/icons-eva/twitter-fill';
 import facebookFill from '@iconify/icons-eva/facebook-fill';
 import linkedinFill from '@iconify/icons-eva/linkedin-fill';
 import { Link as ScrollLink } from 'react-scroll';
-import { Link as RouterLink } from 'react-router-dom';
 // material
 import { styled } from '@material-ui/core/styles';
-import { Grid, Link, Divider, Container, Typography, IconButton, Stack } from '@material-ui/core';
+import { Grid, Divider, Container, Typography, IconButton, Stack } from '@material-ui/core';
 // routes
-import { PATH_PAGE } from '../../routes/paths';
 //
 import Logo from '../../components/Logo';
 
@@ -20,31 +18,6 @@ const SOCIALS = [
   { name: 'Google', icon: googleFill },
   { name: 'Linkedin', icon: linkedinFill },
   { name: 'Twitter', icon: twitterFill }
-];
-
-const LINKS = [
-  {
-    headline: 'Minimal',
-    children: [
-      { name: 'About us', href: PATH_PAGE.about },
-      { name: 'Contact us', href: PATH_PAGE.contact },
-      { name: 'FAQs', href: PATH_PAGE.faqs }
-    ]
-  },
-  {
-    headline: 'Legal',
-    children: [
-      { name: 'Terms and Condition', href: '#' },
-      { name: 'Privacy Policy', href: '#' }
-    ]
-  },
-  {
-    headline: 'Contact',
-    children: [
-      { name: 'support@minimals.cc', href: '#' },
-      { name: 'Los Angeles, 359  Hidden Valley Road', href: '#' }
-    ]
-  }
 ];
 
 const RootStyle = styled('div')(({ theme }) => ({
@@ -71,8 +44,7 @@ export default function MainFooter() {
           </Grid>
           <Grid item xs={8} md={3}>
             <Typography variant="body2" sx={{ pr: { md: 5 } }}>
-              The starting point for your next project with Minimal UI Kit, built on the newest version of Material-UI
-              ©, ready to be customized to your style.
+              Store management
             </Typography>
 
             <Stack
@@ -88,33 +60,6 @@ export default function MainFooter() {
               ))}
             </Stack>
           </Grid>
-
-          <Grid item xs={12} md={7}>
-            <Stack spacing={5} direction={{ xs: 'column', md: 'row' }} justifyContent="space-between">
-              {LINKS.map((list) => {
-                const { headline, children } = list;
-                return (
-                  <Stack key={headline} spacing={2}>
-                    <Typography component="p" variant="overline">
-                      {headline}
-                    </Typography>
-                    {children.map((link) => (
-                      <Link
-                        to={link.href}
-                        key={link.name}
-                        color="inherit"
-                        variant="body2"
-                        component={RouterLink}
-                        sx={{ display: 'block' }}
-                      >
-                        {link.name}
-                      </Link>
-                    ))}
-                  </Stack>
-                );
-              })}
-            </Stack>
-          </Grid>
         </Grid>
 
         <Typography
@@ -127,7 +72,7 @@ export default function MainFooter() {
             textAlign: { xs: 'center', md: 'left' }
           }}
         >
-          © 2021. All rights reserved
+          © 2024. All rights reserved
         </Typography>
       </Container>
     </RootStyle>

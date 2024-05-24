@@ -203,7 +203,7 @@ function AuthProvider({ children }) {
         ...state,
         method: 'cognito',
         user: {
-          displayName: state?.user?.name || 'Minimals',
+          displayName: state?.user?.name || 'Store management',
           role: 'admin',
           ...state.user
         },

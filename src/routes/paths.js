@@ -45,5 +45,3 @@ export const PATH_DASHBOARD = {
     editById: path(ROOTS_DASHBOARD, '/e-commerce/product/nike-blazer-low-77-vintage/edit')
   }
 };
-
-export const PATH_DOCS = 'https://docs-minimals.vercel.app/introduction';

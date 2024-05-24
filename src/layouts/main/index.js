@@ -1,7 +1,7 @@
 import { Link as ScrollLink } from 'react-scroll';
 import { useLocation, Outlet } from 'react-router-dom';
 // material
-import { Box, Link, Container, Typography } from '@material-ui/core';
+import { Box, Container } from '@material-ui/core';
 // components
 import Logo from '../../components/Logo';
 //
@@ -36,12 +36,6 @@ export default function MainLayout() {
             <ScrollLink to="move_top" spy smooth>
               <Logo sx={{ mb: 1, mx: 'auto', cursor: 'pointer' }} />
             </ScrollLink>
-
-            <Typography variant="caption" component="p">
-              © All rights reserved
-              <br /> made by &nbsp;
-              <Link href="https://minimals.cc/">minimals.cc</Link>
-            </Typography>
           </Container>
         </Box>
       )}
