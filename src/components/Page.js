@@ -1,27 +1,16 @@
 import PropTypes from 'prop-types';
 import { Helmet } from 'react-helmet-async';
 import { useLocation } from 'react-router-dom';
-import { forwardRef, useEffect, useCallback } from 'react';
+import { forwardRef } from 'react';
 // material
 import { Box } from '@material-ui/core';
 // utils
-import track from '../utils/analytics';
 
 // ----------------------------------------------------------------------
 
 const Page = forwardRef(({ children, title = '', ...other }, ref) => {
+  // eslint-disable-next-line no-unused-vars
   const { pathname } = useLocation();
-
-  const sendPageViewEvent = useCallback(() => {
-    track.pageview({
-      page_path: pathname
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  useEffect(() => {
-    sendPageViewEvent();
-  }, [sendPageViewEvent]);
 
   return (
     <Box ref={ref} {...other}>

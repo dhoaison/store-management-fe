@@ -1,9 +1,11 @@
+/* eslint-disable no-unused-vars */
 import * as Yup from 'yup';
 import PropTypes from 'prop-types';
 import { useCallback } from 'react';
 import { useSnackbar } from 'notistack5';
 import { useNavigate } from 'react-router-dom';
 import { Form, FormikProvider, useFormik } from 'formik';
+import axios from 'axios';
 // material
 import { LoadingButton } from '@material-ui/lab';
 import {
@@ -26,6 +28,7 @@ import { PATH_DASHBOARD } from '../../../routes/paths';
 import Label from '../../Label';
 import { UploadAvatar } from '../../upload';
 import countries from './countries';
+import { authDomain } from '../../../config';
 
 // ----------------------------------------------------------------------
 
@@ -39,44 +42,96 @@ export default function UserNewForm({ isEdit, currentUser }) {
   const { enqueueSnackbar } = useSnackbar();
 
   const NewUserSchema = Yup.object().shape({
-    name: Yup.string().required('Name is required'),
+    full_name: Yup.string().required('Name is required'),
     email: Yup.string().required('Email is required').email(),
-    phoneNumber: Yup.string().required('Phone number is required'),
+    phone: Yup.string().required('Phone number is required'),
     address: Yup.string().required('Address is required'),
-    country: Yup.string().required('country is required'),
-    company: Yup.string().required('Company is required'),
-    state: Yup.string().required('State is required'),
-    city: Yup.string().required('City is required'),
-    role: Yup.string().required('Role Number is required'),
-    avatarUrl: Yup.mixed().required('Avatar is required')
+    // country: Yup.string().required('country is required'),
+    password: !isEdit && Yup.string().required('Password is required'),
+    role: Yup.string().required('Role is required')
+    // state: Yup.string().required('State is required'),
+    // city: Yup.string().required('City is required'),
+    // role: Yup.string().required('Role Number is required'),
+    // avatarUrl: Yup.mixed().required('Avatar is required')
   });
 
   const formik = useFormik({
     enableReinitialize: true,
     initialValues: {
-      name: currentUser?.name || '',
+      full_name: currentUser?.full_name || '',
       email: currentUser?.email || '',
-      phoneNumber: currentUser?.phoneNumber || '',
+      phone: currentUser?.phone || '',
       address: currentUser?.address || '',
-      country: currentUser?.country || '',
-      state: currentUser?.state || '',
-      city: currentUser?.city || '',
-      zipCode: currentUser?.zipCode || '',
-      avatarUrl: currentUser?.avatarUrl || null,
-      isVerified: currentUser?.isVerified || true,
-      status: currentUser?.status,
-      company: currentUser?.company || '',
-      role: currentUser?.role || ''
+      // country: currentUser?.country || '',
+      // state: currentUser?.state || '',
+      // city: currentUser?.city || '',
+      // zipCode: currentUser?.zipCode || '',
+      // avatarUrl: currentUser?.avatarUrl || null,
+      // isVerified: currentUser?.isVerified || true,
+      // status: currentUser?.status,
+      password: currentUser?.password || '',
+      role: currentUser?.role || 'moderator'
     },
     validationSchema: NewUserSchema,
     onSubmit: async (values, { setSubmitting, resetForm, setErrors }) => {
       try {
-        await fakeRequest(500);
-        resetForm();
-        setSubmitting(false);
-        enqueueSnackbar(!isEdit ? 'Create success' : 'Update success', { variant: 'success' });
-        navigate(PATH_DASHBOARD.user.list);
+        if (isEdit) {
+          await axios
+            .put(
+              `${authDomain}user`,
+              {
+                ...values,
+                id: currentUser.id,
+                role: undefined,
+                email: undefined,
+                password: values.password ? values.password : undefined
+              },
+              {
+                headers: {
+                  Authorization: localStorage.getItem('access_token')
+                }
+              }
+            )
+            .then(() => {
+              resetForm();
+              setSubmitting(false);
+              enqueueSnackbar(!isEdit ? 'Create success' : 'Update success', { variant: 'success' });
+              // navigate(PATH_DASHBOARD.user.list);
+            })
+            .catch(() => {
+              enqueueSnackbar('Error!', {
+                variant: 'error'
+              });
+            });
+        } else {
+          await axios
+            .post(
+              `${authDomain}user`,
+              {
+                ...values
+              },
+              {
+                headers: {
+                  Authorization: localStorage.getItem('access_token')
+                }
+              }
+            )
+            .then(() => {
+              resetForm();
+              setSubmitting(false);
+              enqueueSnackbar(!isEdit ? 'Create success' : 'Update success', { variant: 'success' });
+              // navigate(PATH_DASHBOARD.user.list);
+            })
+            .catch(() => {
+              enqueueSnackbar('Error!', {
+                variant: 'error'
+              });
+            });
+        }
       } catch (error) {
+        enqueueSnackbar('Error!', {
+          variant: 'error'
+        });
         console.error(error);
         setSubmitting(false);
         setErrors(error);
@@ -103,7 +158,7 @@ export default function UserNewForm({ isEdit, currentUser }) {
     <FormikProvider value={formik}>
       <Form noValidate autoComplete="off" onSubmit={handleSubmit}>
         <Grid container spacing={3}>
-          <Grid item xs={12} md={4}>
+          {/* <Grid item xs={12} md={4}>
             <Card sx={{ py: 10, px: 3 }}>
               {isEdit && (
                 <Label
@@ -181,18 +236,19 @@ export default function UserNewForm({ isEdit, currentUser }) {
                 sx={{ mx: 0, width: 1, justifyContent: 'space-between' }}
               />
             </Card>
-          </Grid>
+          </Grid> */}
 
-          <Grid item xs={12} md={8}>
+          {/* <Grid item xs={12} md={8}> */}
+          <Grid item xs={24} md={24}>
             <Card sx={{ p: 3 }}>
               <Stack spacing={3}>
                 <Stack direction={{ xs: 'column', sm: 'row' }} spacing={{ xs: 3, sm: 2 }}>
                   <TextField
                     fullWidth
                     label="Full Name"
-                    {...getFieldProps('name')}
-                    error={Boolean(touched.name && errors.name)}
-                    helperText={touched.name && errors.name}
+                    {...getFieldProps('full_name')}
+                    error={Boolean(touched.full_name && errors.full_name)}
+                    helperText={touched.full_name && errors.full_name}
                   />
                   <TextField
                     fullWidth
@@ -200,6 +256,7 @@ export default function UserNewForm({ isEdit, currentUser }) {
                     {...getFieldProps('email')}
                     error={Boolean(touched.email && errors.email)}
                     helperText={touched.email && errors.email}
+                    disabled={isEdit}
                   />
                 </Stack>
 
@@ -207,43 +264,19 @@ export default function UserNewForm({ isEdit, currentUser }) {
                   <TextField
                     fullWidth
                     label="Phone Number"
-                    {...getFieldProps('phoneNumber')}
-                    error={Boolean(touched.phoneNumber && errors.phoneNumber)}
-                    helperText={touched.phoneNumber && errors.phoneNumber}
+                    {...getFieldProps('phone')}
+                    error={Boolean(touched.phone && errors.phone)}
+                    helperText={touched.phone && errors.phone}
                   />
                   <TextField
-                    select
                     fullWidth
-                    label="Country"
-                    placeholder="Country"
-                    {...getFieldProps('country')}
+                    label="Role"
+                    placeholder="Role"
+                    {...getFieldProps('role')}
                     SelectProps={{ native: true }}
-                    error={Boolean(touched.country && errors.country)}
-                    helperText={touched.country && errors.country}
-                  >
-                    <option value="" />
-                    {countries.map((option) => (
-                      <option key={option.code} value={option.label}>
-                        {option.label}
-                      </option>
-                    ))}
-                  </TextField>
-                </Stack>
-
-                <Stack direction={{ xs: 'column', sm: 'row' }} spacing={{ xs: 3, sm: 2 }}>
-                  <TextField
-                    fullWidth
-                    label="State/Region"
-                    {...getFieldProps('state')}
-                    error={Boolean(touched.state && errors.state)}
-                    helperText={touched.state && errors.state}
-                  />
-                  <TextField
-                    fullWidth
-                    label="City"
-                    {...getFieldProps('city')}
-                    error={Boolean(touched.city && errors.city)}
-                    helperText={touched.city && errors.city}
+                    error={Boolean(touched.role && errors.role)}
+                    helperText={touched.role && errors.role}
+                    disabled
                   />
                 </Stack>
 
@@ -255,23 +288,15 @@ export default function UserNewForm({ isEdit, currentUser }) {
                     error={Boolean(touched.address && errors.address)}
                     helperText={touched.address && errors.address}
                   />
-                  <TextField fullWidth label="Zip/Code" {...getFieldProps('zipCode')} />
-                </Stack>
-
-                <Stack direction={{ xs: 'column', sm: 'row' }} spacing={{ xs: 3, sm: 2 }}>
                   <TextField
+                    disabled={isEdit}
                     fullWidth
-                    label="Company"
-                    {...getFieldProps('company')}
-                    error={Boolean(touched.company && errors.company)}
-                    helperText={touched.company && errors.company}
-                  />
-                  <TextField
-                    fullWidth
-                    label="Role"
-                    {...getFieldProps('role')}
-                    error={Boolean(touched.role && errors.role)}
-                    helperText={touched.role && errors.role}
+                    label="Password"
+                    type="password"
+                    autoComplete="new-password"
+                    {...getFieldProps('password')}
+                    error={Boolean(touched.password && errors.password)}
+                    helperText={touched.password && errors.password}
                   />
                 </Stack>
 

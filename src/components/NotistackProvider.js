@@ -96,7 +96,7 @@ export default function NotistackProvider({ children }) {
       dense
       maxSnack={5}
       // preventDuplicate
-      autoHideDuration={3000}
+      autoHideDuration={2000}
       anchorOrigin={{
         vertical: 'top',
         horizontal: 'right'
