@@ -1,8 +1,10 @@
+/* eslint-disable no-unused-vars */
 import { createContext, useEffect, useReducer } from 'react';
 import PropTypes from 'prop-types';
 // utils
-import axios from '../utils/axios';
+import axios from 'axios';
 import { isValidToken, setSession } from '../utils/jwt';
+import { authDomain } from '../config';
 
 // ----------------------------------------------------------------------
 
@@ -68,12 +70,13 @@ function AuthProvider({ children }) {
     const initialize = async () => {
       try {
         const accessToken = window.localStorage.getItem('accessToken');
+        const user = JSON.parse(window.localStorage.getItem('userInfo'));
 
-        if (accessToken && isValidToken(accessToken)) {
+        if (accessToken && user) {
           setSession(accessToken);
 
-          const response = await axios.get('/api/account/my-account');
-          const { user } = response.data;
+          // const response = await axios.get('/api/account/my-account');
+          // const { user } = response.data;
 
           dispatch({
             type: 'INITIALIZE',
@@ -107,13 +110,15 @@ function AuthProvider({ children }) {
   }, []);
 
   const login = async (email, password) => {
-    const response = await axios.post('/api/account/login', {
+    const response = await axios.post(`${authDomain}auth/signin`, {
       email,
       password
     });
-    const { accessToken, user } = response.data;
+    const { token, user } = response.data;
+    console.log('user :>> ', user);
 
-    setSession(accessToken);
+    window.localStorage.setItem('userInfo', JSON.stringify(user));
+    setSession(token);
     dispatch({
       type: 'LOGIN',
       payload: {

@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import PropTypes from 'prop-types';
 import { Icon } from '@iconify/react';
 import searchFill from '@iconify/icons-eva/search-fill';
@@ -66,7 +67,7 @@ export default function ProductListToolbar({ numSelected, filterName, onFilterNa
           }
         />
       )}
-
+      {/* 
       {numSelected > 0 ? (
         <Tooltip title="Delete">
           <IconButton>
@@ -79,7 +80,7 @@ export default function ProductListToolbar({ numSelected, filterName, onFilterNa
             <Icon icon={roundFilterList} />
           </IconButton>
         </Tooltip>
-      )}
+      )} */}
     </RootStyle>
   );
 }

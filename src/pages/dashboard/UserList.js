@@ -87,7 +87,7 @@ export default function UserList() {
   const getUserList = useCallback(async () => {
     const response = await axios.get(`${authDomain}user/get-all?page=${page + 1}&limit=${rowsPerPage}`, {
       headers: {
-        Authorization: localStorage.getItem('access_token')
+        Authorization: localStorage.getItem('accessToken')
       }
     });
     $userList(response.data.data);
@@ -120,7 +120,7 @@ export default function UserList() {
     await axios
       .delete(`${authDomain}user/?id=${userId}`, {
         headers: {
-          Authorization: localStorage.getItem('access_token')
+          Authorization: localStorage.getItem('accessToken')
         }
       })
       .then(() => {

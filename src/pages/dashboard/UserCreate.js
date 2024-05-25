@@ -27,7 +27,7 @@ export default function UserCreate() {
     const getUserDetail = async () => {
       const response = await axios.get(`${authDomain}user/?id=${name}`, {
         headers: {
-          Authorization: localStorage.getItem('access_token')
+          Authorization: localStorage.getItem('accessToken')
         }
       });
       $userDetails(response.data);

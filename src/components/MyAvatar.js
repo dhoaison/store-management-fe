@@ -1,4 +1,5 @@
 // hooks
+import Avatar from '../assets/avatar.avif';
 import useAuth from '../hooks/useAuth';
 //
 import { MAvatar } from './@material-extend';
@@ -11,12 +12,13 @@ export default function MyAvatar({ ...other }) {
 
   return (
     <MAvatar
-      src={user.photoURL}
-      alt={user.displayName}
-      color={user.photoURL ? 'default' : createAvatar(user.displayName).color}
+      // src={user.photoURL}
+      src={Avatar}
+      alt={user.full_name}
+      color={user.photoURL ? 'default' : createAvatar(user.full_name).color}
       {...other}
     >
-      {createAvatar(user.displayName).name}
+      {createAvatar(user.full_name).name}
     </MAvatar>
   );
 }

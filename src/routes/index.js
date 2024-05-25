@@ -65,7 +65,7 @@ export default function Router() {
         </AuthGuard>
       ),
       children: [
-        { path: '/', element: <Navigate to="/dashboard/user/account" replace /> },
+        { path: '/', element: <Navigate to="/dashboard/e-commerce/list" replace /> },
         {
           path: 'e-commerce',
           children: [

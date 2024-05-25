@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable react/prop-types */
 import { Icon } from '@iconify/react';
 import { sentenceCase } from 'change-case';
 import { useNavigate } from 'react-router-dom';
@@ -113,19 +115,19 @@ const Incrementer = (props) => {
   );
 };
 
-export default function ProductDetailsSumary() {
+export default function ProductDetailsSumary({ product }) {
   const theme = useTheme();
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { product, checkout } = useSelector((state) => state.product);
+  const { checkout } = useSelector((state) => state.product);
   const {
     id,
     name,
-    sizes,
+    // sizes,
     price,
     cover,
     status,
-    colors,
+    // colors,
     available,
     priceSale,
     totalRating,
@@ -152,8 +154,8 @@ export default function ProductDetailsSumary() {
       cover,
       available,
       price,
-      color: colors[0],
-      size: sizes[4],
+      // color: colors[0],
+      // size: sizes[4],
       quantity: available < 1 ? 0 : 1
     },
     onSubmit: async (values, { setSubmitting }) => {
@@ -186,14 +188,14 @@ export default function ProductDetailsSumary() {
     <RootStyle>
       <FormikProvider value={formik}>
         <Form autoComplete="off" noValidate onSubmit={handleSubmit}>
-          <Label
+          {/* <Label
             variant={theme.palette.mode === 'light' ? 'ghost' : 'filled'}
             color={inventoryType === 'in_stock' ? 'success' : 'error'}
             sx={{ textTransform: 'uppercase' }}
           >
             {sentenceCase(inventoryType)}
-          </Label>
-          <Typography
+          </Label> */}
+          {/* <Typography
             variant="overline"
             sx={{
               mt: 2,
@@ -203,30 +205,30 @@ export default function ProductDetailsSumary() {
             }}
           >
             {status}
-          </Typography>
+          </Typography> */}
 
-          <Typography variant="h5" paragraph>
+          <Typography variant="h4" paragraph>
             {name}
           </Typography>
 
-          <Stack spacing={0.5} direction="row" alignItems="center" sx={{ mb: 2 }}>
+          {/* <Stack spacing={0.5} direction="row" alignItems="center" sx={{ mb: 2 }}>
             <Rating value={totalRating} precision={0.1} readOnly />
             <Typography variant="body2" sx={{ color: 'text.secondary' }}>
               ({fShortenNumber(totalReview)}
               reviews)
             </Typography>
-          </Stack>
+          </Stack> */}
 
-          <Typography variant="h4" sx={{ mb: 3 }}>
-            <Box component="span" sx={{ color: 'text.disabled', textDecoration: 'line-through' }}>
+          <Typography variant="h5" sx={{ mb: 3 }}>
+            {/* <Box component="span" sx={{ color: 'text.disabled', textDecoration: 'line-through' }}>
               {priceSale && fCurrency(priceSale)}
-            </Box>
-            &nbsp;{fCurrency(price)}
+            </Box> */}
+            &nbsp;{price} VND
           </Typography>
 
           <Divider sx={{ borderStyle: 'dashed' }} />
 
-          <Stack spacing={3} sx={{ my: 3 }}>
+          {/* <Stack spacing={3} sx={{ my: 3 }}>
             <Stack direction="row" alignItems="center" justifyContent="space-between">
               <Typography variant="subtitle1" sx={{ mt: 0.5 }}>
                 Color
@@ -294,10 +296,10 @@ export default function ProductDetailsSumary() {
                 <FormHelperText error>{touched.quantity && errors.quantity}</FormHelperText>
               </div>
             </Stack>
-          </Stack>
-          <Divider sx={{ borderStyle: 'dashed' }} />
+          </Stack> */}
+          {/* <Divider sx={{ borderStyle: 'dashed' }} /> */}
 
-          <Stack spacing={2} direction={{ xs: 'column', sm: 'row' }} sx={{ mt: 5 }}>
+          {/* <Stack spacing={2} direction={{ xs: 'column', sm: 'row' }} sx={{ mt: 5 }}>
             <Button
               fullWidth
               disabled={isMaxQuantity}
@@ -322,7 +324,7 @@ export default function ProductDetailsSumary() {
                 <MIconButton>{social.icon}</MIconButton>
               </Tooltip>
             ))}
-          </Box>
+          </Box> */}
         </Form>
       </FormikProvider>
     </RootStyle>

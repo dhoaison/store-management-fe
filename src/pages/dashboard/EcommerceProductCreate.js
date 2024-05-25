@@ -1,11 +1,12 @@
-import { useEffect } from 'react';
+/* eslint-disable no-unused-vars */
+import { useEffect, useState } from 'react';
 import { paramCase } from 'change-case';
 import { useParams, useLocation } from 'react-router-dom';
+import axios from 'axios';
 // material
 import { Container } from '@material-ui/core';
 // redux
 import { useDispatch, useSelector } from '../../redux/store';
-import { getProducts } from '../../redux/slices/product';
 // routes
 import { PATH_DASHBOARD } from '../../routes/paths';
 // hooks
@@ -14,6 +15,7 @@ import useSettings from '../../hooks/useSettings';
 import Page from '../../components/Page';
 import HeaderBreadcrumbs from '../../components/HeaderBreadcrumbs';
 import ProductNewForm from '../../components/_dashboard/e-commerce/ProductNewForm';
+import { authDomain } from '../../config';
 
 // ----------------------------------------------------------------------
 
@@ -24,11 +26,20 @@ export default function EcommerceProductCreate() {
   const { name } = useParams();
   const { products } = useSelector((state) => state.product);
   const isEdit = pathname.includes('edit');
-  const currentProduct = products.find((product) => paramCase(product.name) === name);
+
+  const [currentProduct, $currentProduct] = useState({});
 
   useEffect(() => {
-    dispatch(getProducts());
-  }, [dispatch]);
+    const getProducts = async () => {
+      const response = await axios.get(`${authDomain}product/?id=${name}`, {
+        headers: {
+          Authorization: localStorage.getItem('accessToken')
+        }
+      });
+      $currentProduct(response.data);
+    };
+    getProducts();
+  }, [name]);
 
   return (
     <Page title="Ecommerce: Create a new product">

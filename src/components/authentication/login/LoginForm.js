@@ -1,4 +1,6 @@
+/* eslint-disable no-unused-vars */
 import * as Yup from 'yup';
+import axios from 'axios';
 import { useState } from 'react';
 import { useSnackbar } from 'notistack5';
 import { Link as RouterLink } from 'react-router-dom';
@@ -43,8 +45,7 @@ export default function LoginForm() {
   const formik = useFormik({
     initialValues: {
       email: '',
-      password: '',
-      remember: true
+      password: ''
     },
     validationSchema: LoginSchema,
     onSubmit: async (values, { setErrors, setSubmitting, resetForm }) => {
@@ -62,11 +63,9 @@ export default function LoginForm() {
           setSubmitting(false);
         }
       } catch (error) {
-        console.error(error);
-        resetForm();
         if (isMountedRef.current) {
           setSubmitting(false);
-          setErrors({ afterSubmit: error.message });
+          setErrors({ afterSubmit: 'Email or Password is incorrect' });
         }
       }
     }
@@ -115,19 +114,10 @@ export default function LoginForm() {
         </Stack>
 
         <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ my: 2 }}>
-          <FormControlLabel
-            control={<Checkbox {...getFieldProps('remember')} checked={values.remember} />}
-            label="Remember me"
-          />
-
-          <Link component={RouterLink} variant="subtitle2" to={PATH_AUTH.resetPassword}>
-            Forgot password?
-          </Link>
+          <LoadingButton fullWidth size="large" type="submit" variant="contained" loading={isSubmitting}>
+            Login
+          </LoadingButton>
         </Stack>
-
-        <LoadingButton fullWidth size="large" type="submit" variant="contained" loading={isSubmitting}>
-          Login
-        </LoadingButton>
       </Form>
     </FormikProvider>
   );

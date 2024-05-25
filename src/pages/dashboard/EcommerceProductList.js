@@ -1,9 +1,13 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable camelcase */
 import { filter } from 'lodash';
 import { Icon } from '@iconify/react';
 import { sentenceCase } from 'change-case';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import plusFill from '@iconify/icons-eva/plus-fill';
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { useSnackbar } from 'notistack5';
 // material
 import { useTheme, styled } from '@material-ui/core/styles';
 import {
@@ -22,7 +26,7 @@ import {
 } from '@material-ui/core';
 // redux
 import { useDispatch, useSelector } from '../../redux/store';
-import { getProducts, deleteProduct } from '../../redux/slices/product';
+import { deleteProduct } from '../../redux/slices/product';
 // utils
 import { fDate } from '../../utils/formatTime';
 import { fCurrency } from '../../utils/formatNumber';
@@ -41,14 +45,15 @@ import {
   ProductListToolbar,
   ProductMoreMenu
 } from '../../components/_dashboard/e-commerce/product-list';
+import { authDomain } from '../../config';
 
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
   { id: 'name', label: 'Product', alignRight: false },
-  { id: 'createdAt', label: 'Create at', alignRight: false },
-  { id: 'inventoryType', label: 'Status', alignRight: false },
+  { id: 'created_at', label: 'Create at', alignRight: false },
   { id: 'price', label: 'Price', alignRight: true },
+  { id: 'description', label: 'Description', alignRight: false },
   { id: '' }
 ];
 
@@ -56,7 +61,6 @@ const ThumbImgStyle = styled('img')(({ theme }) => ({
   width: 64,
   height: 64,
   objectFit: 'cover',
-  margin: theme.spacing(0, 2),
   borderRadius: theme.shape.borderRadiusSm
 }));
 
@@ -97,19 +101,31 @@ function applySortFilter(array, comparator, query) {
 
 export default function EcommerceProductList() {
   const { themeStretch } = useSettings();
+  const { enqueueSnackbar } = useSnackbar();
+  const navigate = useNavigate();
   const theme = useTheme();
   const dispatch = useDispatch();
-  const { products } = useSelector((state) => state.product);
   const [page, setPage] = useState(0);
   const [order, setOrder] = useState('asc');
   const [selected, setSelected] = useState([]);
   const [filterName, setFilterName] = useState('');
   const [rowsPerPage, setRowsPerPage] = useState(5);
-  const [orderBy, setOrderBy] = useState('createdAt');
+  const [orderBy, setOrderBy] = useState('created_at');
+
+  const [products, $products] = useState([]);
+
+  const getProducts = useCallback(async () => {
+    const response = await axios.get(`${authDomain}product/load-all?page=${page + 1}&limit=${rowsPerPage}`, {
+      headers: {
+        Authorization: localStorage.getItem('accessToken')
+      }
+    });
+    $products(response.data);
+  }, [page, rowsPerPage]);
 
   useEffect(() => {
-    dispatch(getProducts());
-  }, [dispatch]);
+    getProducts();
+  }, [getProducts]);
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -154,8 +170,27 @@ export default function EcommerceProductList() {
     setFilterName(event.target.value);
   };
 
-  const handleDeleteProduct = (productId) => {
-    dispatch(deleteProduct(productId));
+  const handleDeleteProduct = async (userId) => {
+    await axios
+      .delete(`${authDomain}product`, {
+        headers: {
+          Authorization: localStorage.getItem('accessToken')
+        },
+        data: {
+          id: userId
+        }
+      })
+      .then(() => {
+        enqueueSnackbar('Delete success', {
+          variant: 'success'
+        });
+        getProducts();
+      })
+      .catch(() => {
+        enqueueSnackbar('Error!', {
+          variant: 'error'
+        });
+      });
   };
 
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - products.length) : 0;
@@ -206,22 +241,12 @@ export default function EcommerceProductList() {
                 />
                 <TableBody>
                   {filteredProducts.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-                    const { id, name, cover, price, createdAt, inventoryType } = row;
+                    const { id, name, images, price, created_at, description } = row;
 
                     const isItemSelected = selected.indexOf(name) !== -1;
 
                     return (
-                      <TableRow
-                        hover
-                        key={id}
-                        tabIndex={-1}
-                        role="checkbox"
-                        selected={isItemSelected}
-                        aria-checked={isItemSelected}
-                      >
-                        <TableCell padding="checkbox">
-                          <Checkbox checked={isItemSelected} onChange={(event) => handleClick(event, name)} />
-                        </TableCell>
+                      <TableRow hover key={id} tabIndex={-1}>
                         <TableCell component="th" scope="row" padding="none">
                           <Box
                             sx={{
@@ -229,15 +254,25 @@ export default function EcommerceProductList() {
                               display: 'flex',
                               alignItems: 'center'
                             }}
+                            onClick={() => {
+                              navigate(`/dashboard/e-commerce/product/${id}`);
+                            }}
                           >
-                            <ThumbImgStyle alt={name} src={cover} />
+                            <ThumbImgStyle
+                              alt={name}
+                              src={`${authDomain}static/${images[0]?.url}`}
+                              style={{ marginRight: '16px' }}
+                            />
                             <Typography variant="subtitle2" noWrap>
                               {name}
                             </Typography>
                           </Box>
                         </TableCell>
-                        <TableCell style={{ minWidth: 160 }}>{fDate(createdAt)}</TableCell>
-                        <TableCell style={{ minWidth: 160 }}>
+                        <TableCell style={{ minWidth: 160 }}>{fDate(created_at)}</TableCell>
+                        <TableCell align="right">{price} VND</TableCell>
+
+                        <TableCell dangerouslySetInnerHTML={{ __html: description }} />
+                        {/* <TableCell style={{ minWidth: 160 }}>
                           <Label
                             variant={theme.palette.mode === 'light' ? 'ghost' : 'filled'}
                             color={
@@ -248,10 +283,9 @@ export default function EcommerceProductList() {
                           >
                             {sentenceCase(inventoryType)}
                           </Label>
-                        </TableCell>
-                        <TableCell align="right">{fCurrency(price)}</TableCell>
+                        </TableCell> */}
                         <TableCell align="right">
-                          <ProductMoreMenu onDelete={() => handleDeleteProduct(id)} productName={name} />
+                          <ProductMoreMenu onDelete={() => handleDeleteProduct(id)} productName={id} />
                         </TableCell>
                       </TableRow>
                     );

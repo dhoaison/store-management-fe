@@ -1,9 +1,11 @@
+/* eslint-disable no-unused-vars */
 import * as Yup from 'yup';
 import PropTypes from 'prop-types';
 import { useSnackbar } from 'notistack5';
 import { useNavigate } from 'react-router-dom';
 import { useCallback } from 'react';
 import { Form, FormikProvider, useFormik } from 'formik';
+import axios from 'axios';
 // material
 import { styled } from '@material-ui/core/styles';
 import { LoadingButton } from '@material-ui/lab';
@@ -32,6 +34,7 @@ import { PATH_DASHBOARD } from '../../../routes/paths';
 //
 import { QuillEditor } from '../../editor';
 import { UploadMultiFile } from '../../upload';
+import { authDomain } from '../../../config';
 
 // ----------------------------------------------------------------------
 
@@ -76,6 +79,8 @@ export default function ProductNewForm({ isEdit, currentProduct }) {
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
 
+  console.log('currentProduct :>> ', currentProduct);
+
   const NewProductSchema = Yup.object().shape({
     name: Yup.string().required('Name is required'),
     description: Yup.string().required('Description is required'),
@@ -89,26 +94,73 @@ export default function ProductNewForm({ isEdit, currentProduct }) {
       name: currentProduct?.name || '',
       description: currentProduct?.description || '',
       images: currentProduct?.images || [],
-      code: currentProduct?.code || '',
-      sku: currentProduct?.sku || '',
-      price: currentProduct?.price || '',
-      priceSale: currentProduct?.priceSale || '',
-      tags: currentProduct?.tags || [TAGS_OPTION[0]],
-      inStock: Boolean(currentProduct?.inventoryType !== 'out_of_stock'),
-      taxes: true,
-      gender: currentProduct?.gender || GENDER_OPTION[2],
-      category: currentProduct?.category || CATEGORY_OPTION[0].classify[1]
+      price: currentProduct?.price || ''
+      // code: currentProduct?.code || '',
+      // sku: currentProduct?.sku || '',
+      // priceSale: currentProduct?.priceSale || '',
+      // tags: currentProduct?.tags || [TAGS_OPTION[0]],
+      // inStock: Boolean(currentProduct?.inventoryType !== 'out_of_stock'),
+      // taxes: true,
+      // gender: currentProduct?.gender || GENDER_OPTION[2],
+      // category: currentProduct?.category || CATEGORY_OPTION[0].classify[1]
     },
     validationSchema: NewProductSchema,
     onSubmit: async (values, { setSubmitting, resetForm, setErrors }) => {
       try {
-        await fakeRequest(500);
-        resetForm();
-        setSubmitting(false);
-        enqueueSnackbar(!isEdit ? 'Create success' : 'Update success', { variant: 'success' });
-        navigate(PATH_DASHBOARD.eCommerce.list);
+        if (isEdit) {
+          await axios
+            .put(
+              `${authDomain}product`,
+              {
+                ...values,
+                id: currentProduct.id
+              },
+              {
+                headers: {
+                  Authorization: localStorage.getItem('accessToken')
+                }
+              }
+            )
+            .then(() => {
+              setSubmitting(false);
+              enqueueSnackbar(!isEdit ? 'Create success' : 'Update success', { variant: 'success' });
+              // navigate(PATH_DASHBOARD.user.list);
+            })
+            .catch(() => {
+              enqueueSnackbar('Error!', {
+                variant: 'error'
+              });
+            });
+        } else {
+          await axios
+            .post(
+              `${authDomain}product`,
+              {
+                ...values
+              },
+              {
+                headers: {
+                  Authorization: localStorage.getItem('accessToken')
+                }
+              }
+            )
+            .then(() => {
+              resetForm();
+              setSubmitting(false);
+              enqueueSnackbar(!isEdit ? 'Create success' : 'Update success', { variant: 'success' });
+              // navigate(PATH_DASHBOARD.user.list);
+            })
+            .catch(() => {
+              enqueueSnackbar('Error!', {
+                variant: 'error'
+              });
+            });
+        }
+        // navigate(PATH_DASHBOARD.eCommerce.list);
       } catch (error) {
-        console.error(error);
+        enqueueSnackbar('Error!', {
+          variant: 'error'
+        });
         setSubmitting(false);
         setErrors(error);
       }
@@ -118,26 +170,50 @@ export default function ProductNewForm({ isEdit, currentProduct }) {
   const { errors, values, touched, handleSubmit, isSubmitting, setFieldValue, getFieldProps } = formik;
 
   const handleDrop = useCallback(
-    (acceptedFiles) => {
-      setFieldValue(
-        'images',
-        acceptedFiles.map((file) =>
-          Object.assign(file, {
-            preview: URL.createObjectURL(file)
-          })
-        )
-      );
+    async (acceptedFiles) => {
+      const formData = new FormData();
+      console.log('object :>> ', acceptedFiles[0]);
+      formData.append('files', acceptedFiles[0]);
+
+      await axios
+        .post(`${authDomain}product/file`, formData, {
+          headers: {
+            Authorization: localStorage.getItem('accessToken')
+          }
+        })
+        .then(() => {
+          setFieldValue(
+            'images',
+            acceptedFiles.map((file) => (file = file.path))
+          );
+
+          // setFieldValue(
+          //   'imagesPreview',
+          //   acceptedFiles.map((file) =>
+          //     Object.assign(file, {
+          //       preview: URL.createObjectURL(file)
+          //     })
+          //   )
+          // );
+        })
+        .catch(() => {});
     },
     [setFieldValue]
   );
 
   const handleRemoveAll = () => {
     setFieldValue('images', []);
+    // setFieldValue('imagesPreview', []);
   };
 
   const handleRemove = (file) => {
-    const filteredItems = values.images.filter((_file) => _file !== file);
-    setFieldValue('images', filteredItems);
+    // const filteredItems = values.imagesPreview.filter((_file) => _file !== file);
+    const findIndex = values.images.findIndex((_file) => _file === file?.path || file?.url);
+    // setFieldValue('imagesPreview', filteredItems);
+    setFieldValue(
+      'images',
+      values.images.filter((_, index) => index !== findIndex)
+    );
   };
 
   return (
@@ -195,7 +271,7 @@ export default function ProductNewForm({ isEdit, currentProduct }) {
 
           <Grid item xs={12} md={4}>
             <Stack spacing={3}>
-              <Card sx={{ p: 3 }}>
+              {/* <Card sx={{ p: 3 }}>
                 <FormControlLabel
                   control={<Switch {...getFieldProps('inStock')} checked={values.inStock} />}
                   label="In stock"
@@ -247,24 +323,24 @@ export default function ProductNewForm({ isEdit, currentProduct }) {
                     renderInput={(params) => <TextField label="Tags" {...params} />}
                   />
                 </Stack>
-              </Card>
+              </Card> */}
 
               <Card sx={{ p: 3 }}>
                 <Stack spacing={3}>
                   <TextField
                     fullWidth
-                    placeholder="0.00"
+                    placeholder="0"
                     label="Regular Price"
                     {...getFieldProps('price')}
                     InputProps={{
-                      startAdornment: <InputAdornment position="start">$</InputAdornment>,
+                      startAdornment: <InputAdornment position="start">VND</InputAdornment>,
                       type: 'number'
                     }}
                     error={Boolean(touched.price && errors.price)}
                     helperText={touched.price && errors.price}
                   />
 
-                  <TextField
+                  {/* <TextField
                     fullWidth
                     placeholder="0.00"
                     label="Sale Price"
@@ -273,14 +349,14 @@ export default function ProductNewForm({ isEdit, currentProduct }) {
                       startAdornment: <InputAdornment position="start">$</InputAdornment>,
                       type: 'number'
                     }}
-                  />
+                  /> */}
                 </Stack>
 
-                <FormControlLabel
+                {/* <FormControlLabel
                   control={<Switch {...getFieldProps('taxes')} checked={values.taxes} />}
                   label="Price includes taxes"
                   sx={{ mt: 2 }}
-                />
+                /> */}
               </Card>
 
               <LoadingButton type="submit" fullWidth variant="contained" size="large" loading={isSubmitting}>

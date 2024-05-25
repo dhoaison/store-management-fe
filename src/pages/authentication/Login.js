@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { capitalCase } from 'change-case';
 import { Link as RouterLink } from 'react-router-dom';
 // material
@@ -57,13 +58,6 @@ export default function Login() {
 
   return (
     <RootStyle title="Login">
-      <AuthLayout>
-        Don’t have an account? &nbsp;
-        <Link underline="none" variant="subtitle2" component={RouterLink} to={PATH_AUTH.register}>
-          Get started
-        </Link>
-      </AuthLayout>
-
       <MHidden width="mdDown">
         <SectionStyle>
           <Typography variant="h3" sx={{ px: 5, mt: 10, mb: 5 }}>
@@ -88,28 +82,7 @@ export default function Login() {
             </Tooltip>
           </Stack>
 
-          {method === 'firebase' && <AuthFirebaseSocials />}
-
-          <Alert severity="info" sx={{ mb: 3 }}>
-            Use email : <strong>store-management@gmail.com</strong> / password :<strong>&nbsp;demo1234</strong>
-          </Alert>
-
-          {method !== 'auth0' ? (
-            <LoginForm />
-          ) : (
-            <Button fullWidth size="large" type="submit" variant="contained" onClick={handleLoginAuth0}>
-              Login
-            </Button>
-          )}
-
-          <MHidden width="smUp">
-            <Typography variant="body2" align="center" sx={{ mt: 3 }}>
-              Don’t have an account?&nbsp;
-              <Link variant="subtitle2" component={RouterLink} to={PATH_AUTH.register}>
-                Get started
-              </Link>
-            </Typography>
-          </MHidden>
+          <LoginForm />
         </ContentStyle>
       </Container>
     </RootStyle>

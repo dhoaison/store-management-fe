@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { Icon } from '@iconify/react';
 import { useSnackbar } from 'notistack5';
 import { useRef, useState } from 'react';
@@ -84,7 +85,7 @@ export default function AccountPopover() {
       <MenuPopover open={open} onClose={handleClose} anchorEl={anchorRef.current} sx={{ width: 220 }}>
         <Box sx={{ my: 1.5, px: 2.5 }}>
           <Typography variant="subtitle1" noWrap>
-            {user.displayName}
+            {user.full_name}
           </Typography>
           <Typography variant="body2" sx={{ color: 'text.secondary' }} noWrap>
             {user.email}
@@ -93,7 +94,7 @@ export default function AccountPopover() {
 
         <Divider sx={{ my: 1 }} />
 
-        {MENU_OPTIONS.map((option) => (
+        {/* {MENU_OPTIONS.map((option) => (
           <MenuItem
             key={option.label}
             to={option.linkTo}
@@ -113,7 +114,7 @@ export default function AccountPopover() {
 
             {option.label}
           </MenuItem>
-        ))}
+        ))} */}
 
         <Box sx={{ p: 2, pt: 1.5 }}>
           <Button fullWidth color="inherit" variant="outlined" onClick={handleLogout}>

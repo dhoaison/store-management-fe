@@ -88,7 +88,7 @@ export default function UserNewForm({ isEdit, currentUser }) {
               },
               {
                 headers: {
-                  Authorization: localStorage.getItem('access_token')
+                  Authorization: localStorage.getItem('accessToken')
                 }
               }
             )
@@ -112,7 +112,7 @@ export default function UserNewForm({ isEdit, currentUser }) {
               },
               {
                 headers: {
-                  Authorization: localStorage.getItem('access_token')
+                  Authorization: localStorage.getItem('accessToken')
                 }
               }
             )

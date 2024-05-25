@@ -25,6 +25,7 @@ import { fData } from '../../utils/formatNumber';
 import { MIconButton } from '../@material-extend';
 import { varFadeInRight } from '../animate';
 import { UploadIllustration } from '../../assets';
+import { authDomain } from '../../config';
 
 // ----------------------------------------------------------------------
 
@@ -127,7 +128,7 @@ export default function UploadMultiFile({ error, showPreview = false, files, onR
       <List disablePadding sx={{ ...(hasFile && { my: 3 }) }}>
         <AnimatePresence>
           {files.map((file) => {
-            const { name, size, preview } = file;
+            const { name, size } = file;
             const key = isString(file) ? file : name;
 
             if (showPreview) {
@@ -150,9 +151,10 @@ export default function UploadMultiFile({ error, showPreview = false, files, onR
                   <Paper
                     variant="outlined"
                     component="img"
-                    src={isString(file) ? file : preview}
+                    src={isString(file) ? `${authDomain}static/${file}` : `${authDomain}static/${file?.url}`}
                     sx={{ width: '100%', height: '100%', objectFit: 'cover', position: 'absolute' }}
                   />
+                  {console.log('file', file)}
                   <Box sx={{ top: 6, right: 6, position: 'absolute' }}>
                     <MIconButton
                       size="small"
@@ -212,7 +214,7 @@ export default function UploadMultiFile({ error, showPreview = false, files, onR
           <Button onClick={onRemoveAll} sx={{ mr: 1.5 }}>
             Remove all
           </Button>
-          <Button variant="contained">Upload files</Button>
+          {/* <Button variant="contained">Upload files</Button> */}
         </Stack>
       )}
     </Box>

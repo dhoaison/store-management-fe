@@ -44,10 +44,10 @@ const sidebarConfig = [
         path: PATH_DASHBOARD.eCommerce.root,
         icon: ICONS.cart,
         children: [
-          { title: 'product', path: PATH_DASHBOARD.eCommerce.productById },
+          // { title: 'product', path: PATH_DASHBOARD.eCommerce.productById },
           { title: 'list', path: PATH_DASHBOARD.eCommerce.list },
-          { title: 'create', path: PATH_DASHBOARD.eCommerce.newProduct },
-          { title: 'edit', path: PATH_DASHBOARD.eCommerce.editById }
+          { title: 'create', path: PATH_DASHBOARD.eCommerce.newProduct }
+          // { title: 'edit', path: PATH_DASHBOARD.eCommerce.editById }
         ]
       }
     ]

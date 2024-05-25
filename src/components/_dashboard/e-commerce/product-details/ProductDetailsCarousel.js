@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import Slider from 'react-slick';
 import { findIndex } from 'lodash';
 import PropTypes from 'prop-types';
@@ -6,10 +7,10 @@ import { useState, useRef, useEffect } from 'react';
 import { alpha, styled } from '@material-ui/core/styles';
 import { Box } from '@material-ui/core';
 // redux
-import { useSelector } from '../../../../redux/store';
 //
 import LightboxModal from '../../../LightboxModal';
 import { CarouselControlsArrowsIndex } from '../../../carousel';
+import { authDomain } from '../../../../config';
 
 // ----------------------------------------------------------------------
 
@@ -71,7 +72,7 @@ LargeItem.propTypes = {
 function LargeItem({ item, onOpenLightbox }) {
   return (
     <Box sx={{ cursor: 'zoom-in', paddingTop: '100%', position: 'relative' }}>
-      <LargeImgStyle alt="large image" src={item} onClick={() => onOpenLightbox(item)} />
+      <LargeImgStyle alt="large image" src={`${authDomain}static/${item?.url}`} onClick={() => onOpenLightbox(item)} />
     </Box>
   );
 }
@@ -84,12 +85,12 @@ function ThumbnailItem({ item }) {
   return (
     <ThumbWrapperStyle>
       <Box className="isActive" />
-      <ThumbImgStyle alt="thumb image" src={item} />
+      <ThumbImgStyle alt="thumb image" src={`${authDomain}static/${item?.url}`} />
     </ThumbWrapperStyle>
   );
 }
 
-export default function ProductDetailsCarousel() {
+export default function ProductDetailsCarousel({ product }) {
   const [openLightbox, setOpenLightbox] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -98,7 +99,8 @@ export default function ProductDetailsCarousel() {
   const slider1 = useRef(null);
   const slider2 = useRef(null);
 
-  const { product } = useSelector((state) => state.product);
+  console.log('product :>> ', product);
+
   const imagesLightbox = product.images.map((_image) => _image);
 
   const handleOpenLightbox = (url) => {

@@ -5,6 +5,7 @@ import Lightbox from 'react-image-lightbox';
 import { makeStyles, createStyles } from '@material-ui/styles';
 import { alpha } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
+import { authDomain } from '../config';
 
 // ----------------------------------------------------------------------
 
@@ -114,7 +115,7 @@ export default function LightboxModal({ images, photoIndex, setPhotoIndex, isOpe
     <>
       {isOpen && (
         <Lightbox
-          mainSrc={images[photoIndex]}
+          mainSrc={`${authDomain}static/${images[photoIndex]?.url}`}
           nextSrc={images[(photoIndex + 1) % images.length]}
           prevSrc={images[(photoIndex + images.length - 1) % images.length]}
           onCloseRequest={onClose}

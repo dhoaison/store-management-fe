@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { Icon } from '@iconify/react';
 import { sentenceCase } from 'change-case';
 import { useParams } from 'react-router-dom';
@@ -5,6 +6,7 @@ import { useEffect, useState } from 'react';
 import clockFill from '@iconify/icons-eva/clock-fill';
 import roundVerified from '@iconify/icons-ic/round-verified';
 import roundVerifiedUser from '@iconify/icons-ic/round-verified-user';
+import axios from 'axios';
 // material
 import { alpha, styled } from '@material-ui/core/styles';
 import { Box, Tab, Card, Grid, Divider, Skeleton, Container, Typography } from '@material-ui/core';
@@ -26,6 +28,7 @@ import {
   ProductDetailsCarousel
 } from '../../components/_dashboard/e-commerce/product-details';
 import CartWidget from '../../components/_dashboard/e-commerce/CartWidget';
+import { authDomain } from '../../config';
 
 // ----------------------------------------------------------------------
 
@@ -82,15 +85,27 @@ export default function EcommerceProductDetails() {
   const dispatch = useDispatch();
   const { name } = useParams();
   const [value, setValue] = useState('1');
-  const { product, error } = useSelector((state) => state.product);
+  const { error } = useSelector((state) => state.product);
+
+  const [product, $product] = useState('');
 
   useEffect(() => {
-    dispatch(getProduct(name));
-  }, [dispatch, name]);
+    const getProducts = async () => {
+      const response = await axios.get(`${authDomain}product/?id=${name}`, {
+        headers: {
+          Authorization: localStorage.getItem('accessToken')
+        }
+      });
+      $product(response.data);
+    };
+    getProducts();
+  }, [name]);
 
   const handleChangeTab = (event, newValue) => {
     setValue(newValue);
   };
+
+  console.log('product', product);
 
   return (
     <Page title="Ecommerce: Product Details">
@@ -107,17 +122,17 @@ export default function EcommerceProductDetails() {
           ]}
         />
 
-        <CartWidget />
+        {/* <CartWidget /> */}
 
         {product && (
           <>
             <Card>
               <Grid container>
                 <Grid item xs={12} md={6} lg={7}>
-                  <ProductDetailsCarousel />
+                  <ProductDetailsCarousel product={product} />
                 </Grid>
                 <Grid item xs={12} md={6} lg={5}>
-                  <ProductDetailsSumary />
+                  <ProductDetailsSumary product={product} />
                 </Grid>
               </Grid>
             </Card>
@@ -143,12 +158,12 @@ export default function EcommerceProductDetails() {
                 <Box sx={{ px: 3, bgcolor: 'background.neutral' }}>
                   <TabList onChange={handleChangeTab}>
                     <Tab disableRipple value="1" label="Description" />
-                    <Tab
+                    {/* <Tab
                       disableRipple
                       value="2"
-                      label={`Review (${product.reviews.length})`}
+                      label={`Review (${product.images.length})`}
                       sx={{ '& .MuiTab-wrapper': { whiteSpace: 'nowrap' } }}
-                    />
+                    /> */}
                   </TabList>
                 </Box>
 
@@ -159,9 +174,9 @@ export default function EcommerceProductDetails() {
                     <Markdown children={product.description} />
                   </Box>
                 </TabPanel>
-                <TabPanel value="2">
+                {/* <TabPanel value="2">
                   <ProductDetailsReview product={product} />
-                </TabPanel>
+                </TabPanel> */}
               </TabContext>
             </Card>
           </>

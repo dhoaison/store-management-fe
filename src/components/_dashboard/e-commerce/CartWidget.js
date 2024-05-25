@@ -8,7 +8,6 @@ import { Badge } from '@material-ui/core';
 // redux
 import { useSelector } from '../../../redux/store';
 // routes
-import { PATH_DASHBOARD } from '../../../routes/paths';
 
 // ----------------------------------------------------------------------
 
