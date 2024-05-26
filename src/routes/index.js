@@ -52,6 +52,22 @@ export default function Router() {
             </GuestGuard>
           )
         },
+        {
+          path: '/e-commerce/list',
+          element: (
+            <GuestGuard>
+              <EcommerceProductListAuth />
+            </GuestGuard>
+          )
+        },
+        {
+          path: '/e-commerce/product/:name',
+          element: (
+            <GuestGuard>
+              <EcommerceProductDetailsAuth />
+            </GuestGuard>
+          )
+        },
         { path: 'login-unprotected', element: <Login /> }
       ]
     },
@@ -69,7 +85,7 @@ export default function Router() {
         {
           path: 'e-commerce',
           children: [
-            { path: '/', element: <Navigate to="/dashboard/e-commerce/shop" replace /> },
+            { path: '/', element: <Navigate to="/dashboard/e-commerce/list" replace /> },
             { path: 'product/:name', element: <EcommerceProductDetails /> },
             { path: 'list', element: <EcommerceProductList /> },
             { path: 'product/new', element: <EcommerceProductCreate /> },
@@ -113,7 +129,9 @@ export default function Router() {
 // Authentication
 const Login = Loadable(lazy(() => import('../pages/authentication/Login')));
 const EcommerceProductDetails = Loadable(lazy(() => import('../pages/dashboard/EcommerceProductDetails')));
+const EcommerceProductDetailsAuth = Loadable(lazy(() => import('../pages/dashboard/EcommerceProductDetailsAuth')));
 const EcommerceProductList = Loadable(lazy(() => import('../pages/dashboard/EcommerceProductList')));
+const EcommerceProductListAuth = Loadable(lazy(() => import('../pages/dashboard/EcommerceProductListAuth')));
 const EcommerceProductCreate = Loadable(lazy(() => import('../pages/dashboard/EcommerceProductCreate')));
 const UserList = Loadable(lazy(() => import('../pages/dashboard/UserList')));
 const UserAccount = Loadable(lazy(() => import('../pages/dashboard/UserAccount')));
