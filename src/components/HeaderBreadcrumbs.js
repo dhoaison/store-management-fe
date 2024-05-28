@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import { Box, Typography, Link, Stack } from '@material-ui/core';
 //
 import { MBreadcrumbs } from './@material-extend';
+import useAuth from '../hooks/useAuth';
 
 // ----------------------------------------------------------------------
 
@@ -16,6 +17,8 @@ HeaderBreadcrumbs.propTypes = {
 };
 
 export default function HeaderBreadcrumbs({ links, action, heading, moreLink = '' || [], sx, ...other }) {
+  const { user } = useAuth();
+
   return (
     <Stack sx={sx} mb={5} spacing={2}>
       <Stack direction="row" alignItems="center">
@@ -26,7 +29,7 @@ export default function HeaderBreadcrumbs({ links, action, heading, moreLink = '
           {links && <MBreadcrumbs links={links} {...other} />}
         </Box>
 
-        {action && <Box sx={{ flexShrink: 0 }}>{action}</Box>}
+        {user?.role === 'admin' && action && <Box sx={{ flexShrink: 0 }}>{action}</Box>}
       </Stack>
 
       {isString(moreLink) ? (

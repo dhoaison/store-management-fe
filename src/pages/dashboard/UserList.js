@@ -29,6 +29,7 @@ import Scrollbar from '../../components/Scrollbar';
 import SearchNotFound from '../../components/SearchNotFound';
 import HeaderBreadcrumbs from '../../components/HeaderBreadcrumbs';
 import { UserListHead, UserListToolbar, UserMoreMenu } from '../../components/_dashboard/user/list';
+import useAuth from '../../hooks/useAuth';
 import { authDomain } from '../../config';
 // ----------------------------------------------------------------------
 
@@ -75,6 +76,7 @@ function applySortFilter(array, comparator, query) {
 export default function UserList() {
   const { themeStretch } = useSettings();
   const { enqueueSnackbar } = useSnackbar();
+  const { user } = useAuth();
 
   const [page, setPage] = useState(0);
   const [order, setOrder] = useState('asc');
@@ -83,6 +85,7 @@ export default function UserList() {
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
   const [userList, $userList] = useState([]);
+  const [totalUsers, $totalUsers] = useState(0);
 
   const getUserList = useCallback(async () => {
     const response = await axios.get(`${authDomain}user/get-all?page=${page + 1}&limit=${rowsPerPage}`, {
@@ -91,6 +94,7 @@ export default function UserList() {
       }
     });
     $userList(response.data.data);
+    $totalUsers(response.data.total);
   }, [page, rowsPerPage]);
 
   useEffect(() => {
@@ -136,7 +140,7 @@ export default function UserList() {
       });
   };
 
-  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - userList.length) : 0;
+  // const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - userList.length) : 0;
 
   const filteredUsers = applySortFilter(userList, getComparator(order, orderBy), filterName);
 
@@ -178,7 +182,7 @@ export default function UserList() {
                   onRequestSort={handleRequestSort}
                 />
                 <TableBody>
-                  {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
+                  {filteredUsers.map((row) => {
                     const { id, full_name, role, address, phone, email } = row;
 
                     return (
@@ -197,17 +201,14 @@ export default function UserList() {
                         <TableCell align="left">{phone}</TableCell>
                         <TableCell align="left">{email}</TableCell>
 
-                        <TableCell align="right">
-                          <UserMoreMenu onDelete={() => handleDeleteUser(id)} userName={id} />
-                        </TableCell>
+                        {user?.role === 'admin' && (
+                          <TableCell align="right">
+                            <UserMoreMenu onDelete={() => handleDeleteUser(id)} userName={id} />
+                          </TableCell>
+                        )}
                       </TableRow>
                     );
                   })}
-                  {emptyRows > 0 && (
-                    <TableRow style={{ height: 53 * emptyRows }}>
-                      <TableCell colSpan={6} />
-                    </TableRow>
-                  )}
                 </TableBody>
                 {isUserNotFound && (
                   <TableBody>
@@ -225,7 +226,7 @@ export default function UserList() {
           <TablePagination
             rowsPerPageOptions={[5, 10, 25]}
             component="div"
-            count={userList.length}
+            count={totalUsers}
             rowsPerPage={rowsPerPage}
             page={page}
             onPageChange={handleChangePage}

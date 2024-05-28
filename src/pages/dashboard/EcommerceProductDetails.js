@@ -137,7 +137,7 @@ export default function EcommerceProductDetails() {
               </Grid>
             </Card>
 
-            <Grid container sx={{ my: 8 }}>
+            {/* <Grid container sx={{ my: 8 }}>
               {PRODUCT_DESCRIPTION.map((item) => (
                 <Grid item xs={12} md={4} key={item.title}>
                   <Box sx={{ my: 2, mx: 'auto', maxWidth: 280, textAlign: 'center' }}>
@@ -151,9 +151,9 @@ export default function EcommerceProductDetails() {
                   </Box>
                 </Grid>
               ))}
-            </Grid>
+            </Grid> */}
 
-            <Card>
+            <Card style={{ marginTop: '16px' }}>
               <TabContext value={value}>
                 <Box sx={{ px: 3, bgcolor: 'background.neutral' }}>
                   <TabList onChange={handleChangeTab}>

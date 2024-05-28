@@ -55,3 +55,25 @@ const sidebarConfig = [
 ];
 
 export default sidebarConfig;
+
+export const sidebarConfigUser = [
+  {
+    subheader: 'management',
+    items: [
+      {
+        title: 'user',
+        path: PATH_DASHBOARD.user.root,
+        icon: ICONS.user,
+        children: [{ title: 'list', path: PATH_DASHBOARD.user.list }]
+      },
+
+      // MANAGEMENT : E-COMMERCE
+      {
+        title: 'e-commerce',
+        path: PATH_DASHBOARD.eCommerce.root,
+        icon: ICONS.cart,
+        children: [{ title: 'list', path: PATH_DASHBOARD.eCommerce.list }]
+      }
+    ]
+  }
+];

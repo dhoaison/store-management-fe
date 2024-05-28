@@ -16,7 +16,7 @@ import Scrollbar from '../../components/Scrollbar';
 import NavSection from '../../components/NavSection';
 import { MHidden } from '../../components/@material-extend';
 //
-import sidebarConfig from './SidebarConfig';
+import sidebarConfig, { sidebarConfigUser } from './SidebarConfig';
 
 // ----------------------------------------------------------------------
 
@@ -155,7 +155,7 @@ export default function DashboardSidebar({ isOpenSidebar, onCloseSidebar }) {
         )}
       </Stack>
 
-      <NavSection navConfig={sidebarConfig} isShow={!isCollapse} />
+      <NavSection navConfig={user?.role === 'admin' ? sidebarConfig : sidebarConfigUser} isShow={!isCollapse} />
     </Scrollbar>
   );
 

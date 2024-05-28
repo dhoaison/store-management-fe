@@ -70,7 +70,7 @@ export default function UserNewForm({ isEdit, currentUser }) {
       // isVerified: currentUser?.isVerified || true,
       // status: currentUser?.status,
       password: currentUser?.password || '',
-      role: currentUser?.role || 'moderator'
+      role: currentUser?.role || 'user'
     },
     validationSchema: NewUserSchema,
     onSubmit: async (values, { setSubmitting, resetForm, setErrors }) => {
@@ -288,7 +288,6 @@ export default function UserNewForm({ isEdit, currentUser }) {
                     helperText={touched.address && errors.address}
                   />
                   <TextField
-                    disabled={isEdit}
                     fullWidth
                     label="Password"
                     type="password"

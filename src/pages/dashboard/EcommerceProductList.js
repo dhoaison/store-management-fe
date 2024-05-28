@@ -46,6 +46,7 @@ import {
   ProductMoreMenu
 } from '../../components/_dashboard/e-commerce/product-list';
 import { authDomain } from '../../config';
+import useAuth from '../../hooks/useAuth';
 
 // ----------------------------------------------------------------------
 
@@ -103,6 +104,7 @@ export default function EcommerceProductList() {
   const { themeStretch } = useSettings();
   const { enqueueSnackbar } = useSnackbar();
   const navigate = useNavigate();
+  const { user } = useAuth();
   const theme = useTheme();
   const dispatch = useDispatch();
   const [page, setPage] = useState(0);
@@ -113,6 +115,7 @@ export default function EcommerceProductList() {
   const [orderBy, setOrderBy] = useState('created_at');
 
   const [products, $products] = useState([]);
+  const [totalProducts, $totalProducts] = useState(0);
 
   const getProducts = useCallback(async () => {
     const response = await axios.get(`${authDomain}product/load-all?page=${page + 1}&limit=${rowsPerPage}`, {
@@ -120,7 +123,8 @@ export default function EcommerceProductList() {
         Authorization: localStorage.getItem('accessToken')
       }
     });
-    $products(response.data);
+    $products(response.data.data);
+    $totalProducts(response.data.total);
   }, [page, rowsPerPage]);
 
   useEffect(() => {
@@ -240,7 +244,7 @@ export default function EcommerceProductList() {
                   onSelectAllClick={handleSelectAllClick}
                 />
                 <TableBody>
-                  {filteredProducts.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
+                  {filteredProducts.map((row) => {
                     const { id, name, images, price, created_at, description } = row;
 
                     const isItemSelected = selected.indexOf(name) !== -1;
@@ -271,7 +275,16 @@ export default function EcommerceProductList() {
                         <TableCell style={{ minWidth: 160 }}>{fDate(created_at)}</TableCell>
                         <TableCell align="right">{price} VND</TableCell>
 
-                        <TableCell dangerouslySetInnerHTML={{ __html: description }} />
+                        <TableCell
+                          style={{
+                            display: '-webkit-box',
+                            '-webkit-line-clamp': '2',
+                            '-webkit-box-orient': 'vertical',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis'
+                          }}
+                          dangerouslySetInnerHTML={{ __html: description }}
+                        />
                         {/* <TableCell style={{ minWidth: 160 }}>
                           <Label
                             variant={theme.palette.mode === 'light' ? 'ghost' : 'filled'}
@@ -284,9 +297,11 @@ export default function EcommerceProductList() {
                             {sentenceCase(inventoryType)}
                           </Label>
                         </TableCell> */}
-                        <TableCell align="right">
-                          <ProductMoreMenu onDelete={() => handleDeleteProduct(id)} productName={id} />
-                        </TableCell>
+                        {user?.role === 'admin' && (
+                          <TableCell align="right">
+                            <ProductMoreMenu onDelete={() => handleDeleteProduct(id)} productName={id} />
+                          </TableCell>
+                        )}
                       </TableRow>
                     );
                   })}
@@ -314,7 +329,7 @@ export default function EcommerceProductList() {
           <TablePagination
             rowsPerPageOptions={[5, 10, 25]}
             component="div"
-            count={products.length}
+            count={totalProducts}
             rowsPerPage={rowsPerPage}
             page={page}
             onPageChange={handleChangePage}
