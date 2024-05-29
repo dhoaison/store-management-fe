@@ -93,7 +93,7 @@ export default function ProductNewForm({ isEdit, currentProduct }) {
     initialValues: {
       name: currentProduct?.name || '',
       description: currentProduct?.description || '',
-      images: currentProduct?.images || [],
+      images: currentProduct?.images?.map((image) => image.url) || [],
       price: currentProduct?.price || ''
       // code: currentProduct?.code || '',
       // sku: currentProduct?.sku || '',
@@ -172,7 +172,6 @@ export default function ProductNewForm({ isEdit, currentProduct }) {
   const handleDrop = useCallback(
     async (acceptedFiles) => {
       const formData = new FormData();
-      console.log('object :>> ', acceptedFiles[0]);
       formData.append('files', acceptedFiles[0]);
 
       await axios
@@ -182,10 +181,7 @@ export default function ProductNewForm({ isEdit, currentProduct }) {
           }
         })
         .then(() => {
-          setFieldValue(
-            'images',
-            acceptedFiles.map((file) => (file = file.path))
-          );
+          setFieldValue('images', values.images.concat(acceptedFiles.map((file) => (file = file.path))));
 
           // setFieldValue(
           //   'imagesPreview',
@@ -198,7 +194,7 @@ export default function ProductNewForm({ isEdit, currentProduct }) {
         })
         .catch(() => {});
     },
-    [setFieldValue]
+    [setFieldValue, values.images]
   );
 
   const handleRemoveAll = () => {

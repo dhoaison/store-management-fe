@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { Box, Typography, Link, Stack } from '@material-ui/core';
 //
 import { MBreadcrumbs } from './@material-extend';
-import useAuth from '../hooks/useAuth';
+// import useAuth from '../hooks/useAuth';
 
 // ----------------------------------------------------------------------
 
@@ -17,7 +17,7 @@ HeaderBreadcrumbs.propTypes = {
 };
 
 export default function HeaderBreadcrumbs({ links, action, heading, moreLink = '' || [], sx, ...other }) {
-  const { user } = useAuth();
+  // const { user } = useAuth();
 
   return (
     <Stack sx={sx} mb={5} spacing={2}>

@@ -157,16 +157,18 @@ export default function UserList() {
             { name: 'List' }
           ]}
           action={
-            user?.role === 'admin' ?
-            <Button
-              variant="contained"
-              component={RouterLink}
-              to={PATH_DASHBOARD.user.newUser}
-              startIcon={<Icon icon={plusFill} />}
-            >
-              New User
-            </Button>
-            : <></>
+            user?.role === 'admin' ? (
+              <Button
+                variant="contained"
+                component={RouterLink}
+                to={PATH_DASHBOARD.user.newUser}
+                startIcon={<Icon icon={plusFill} />}
+              >
+                New User
+              </Button>
+            ) : (
+              <></>
+            )
           }
         />
 
