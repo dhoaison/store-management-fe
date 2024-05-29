@@ -297,11 +297,11 @@ export default function EcommerceProductList() {
                             {sentenceCase(inventoryType)}
                           </Label>
                         </TableCell> */}
-                        {user?.role === 'admin' && (
+                        
                           <TableCell align="right">
                             <ProductMoreMenu onDelete={() => handleDeleteProduct(id)} productName={id} />
                           </TableCell>
-                        )}
+                        
                       </TableRow>
                     );
                   })}
