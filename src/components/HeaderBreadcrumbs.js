@@ -29,7 +29,7 @@ export default function HeaderBreadcrumbs({ links, action, heading, moreLink = '
           {links && <MBreadcrumbs links={links} {...other} />}
         </Box>
 
-        {user?.role === 'admin' && action && <Box sx={{ flexShrink: 0 }}>{action}</Box>}
+        {action && <Box sx={{ flexShrink: 0 }}>{action}</Box>}
       </Stack>
 
       {isString(moreLink) ? (
