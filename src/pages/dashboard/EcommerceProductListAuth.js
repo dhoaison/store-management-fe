@@ -115,6 +115,7 @@ export default function EcommerceProductList() {
   const [orderBy, setOrderBy] = useState('created_at');
 
   const [products, $products] = useState([]);
+  const [totalProducts, $totalProducts] = useState(0);
 
   const getProducts = useCallback(async () => {
     const response = await axios.get(`${authDomain}product/load-all?page=${page + 1}&limit=${rowsPerPage}`, {
@@ -122,7 +123,8 @@ export default function EcommerceProductList() {
         Authorization: localStorage.getItem('accessToken')
       }
     });
-    $products(response.data);
+    $products(response.data.data);
+    $totalProducts(response.data.total);
   }, [page, rowsPerPage]);
 
   useEffect(() => {
@@ -223,7 +225,7 @@ export default function EcommerceProductList() {
                   justifyContent: 'space-between'
                 }}
               >
-                {filteredProducts.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
+                {filteredProducts.map((row) => {
                   const { id, name, images, price, created_at, description } = row;
 
                   const isItemSelected = selected.indexOf(name) !== -1;
@@ -264,7 +266,7 @@ export default function EcommerceProductList() {
           <TablePagination
             rowsPerPageOptions={[5, 10, 25]}
             component="div"
-            count={products.length}
+            count={totalProducts}
             rowsPerPage={rowsPerPage}
             page={page}
             onPageChange={handleChangePage}
