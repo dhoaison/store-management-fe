@@ -157,6 +157,7 @@ export default function UserList() {
             { name: 'List' }
           ]}
           action={
+            user?.role === 'admin' ?
             <Button
               variant="contained"
               component={RouterLink}
@@ -165,6 +166,7 @@ export default function UserList() {
             >
               New User
             </Button>
+            : <></>
           }
         />
 
